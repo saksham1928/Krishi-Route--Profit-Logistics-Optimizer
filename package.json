@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Profit & Logistics Optimizer for Indian Farmers",
   "private": true,
+  "proxy": "https://enam.gov.in",
   "dependencies": {
     "leaflet": "^1.9.4",
     "react": "^18.2.0",

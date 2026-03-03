@@ -6,6 +6,7 @@ import ImpactMetrics from '../ImpactMetrics/ImpactMetrics';
 import RouteMap from '../RouteMap/RouteMap';
 import { calculateProfitability } from '../../services/profitCalculator';
 import './Dashboard.css';
+import { fetchLivePrices } from '../../services/enamApi';
 
 const Dashboard = () => {
   const [tripData, setTripData] = useState(null);
@@ -18,17 +19,28 @@ const Dashboard = () => {
     setError(null);
     
     try {
-      // Simulate slight delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // 1. Check if the user auto-detected a state. 
+      // (Assuming you saved the detected state name in formData.location)
+      const userState = formData.location || "RAJASTHAN"; // Fallback for testing
+      const selectedCrop = formData.crop || "-- Select Commodity --";
+
+      console.log(`Fetching live data for ${selectedCrop} in ${userState}...`);
       
-      // Calculate profit using local service
-      const results = calculateProfitability(formData);
+      // 2. Call our new eNAM API service
+      const liveData = await fetchLivePrices(userState, selectedCrop);
+      
+      console.log("SUCCESS! Here is the live data from the Government:", liveData);
+
+      // (We will plug this liveData into calculateProfitability in the next step!)
       
       setTripData(formData);
-      setProfitResults(results);
+      // Temporarily keeping your old profit results so the app doesn't break
+      const finalResults = calculateProfitability(formData, liveData); 
+      setProfitResults(finalResults);
+      
     } catch (err) {
-      setError(err.message || 'Failed to calculate profit. Please try again.');
-      console.error('Error calculating profit:', err);
+      setError('Failed to fetch live prices from eNAM. Please try again.');
+      console.error('API Error:', err);
     } finally {
       setLoading(false);
     }

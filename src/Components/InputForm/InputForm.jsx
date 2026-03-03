@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import mockData from '../../data/mockData.json';
 import './InputForm.css';
+import { getUserLocation, detectStateFromCoordinates } from '../../utils/stateDetector';
+import stateBoundaries from '../../data/stateBoundaries.json';
+
+
 
 const InputForm = ({ onSubmit, loading, onReset, hasResults }) => {
   const [formData, setFormData] = useState({
@@ -10,6 +14,29 @@ const InputForm = ({ onSubmit, loading, onReset, hasResults }) => {
     vehicle: '',
     location: '',
   });
+  //
+  const [locationStatus, setLocationStatus] = useState('');
+const handleDetectLocation = async () => {
+    setLocationStatus('Locating...');
+    try {
+      // 1. Get GPS coordinates
+      const coords = await getUserLocation();
+      
+      // 2. Find the state
+      const detectedState = detectStateFromCoordinates(coords.lat, coords.lng);
+      
+      if (detectedState) {
+        setLocationStatus(`Detected: ${detectedState.name}`);
+        // Optional: You can auto-fill your form's location state here
+          handleChange('location', detectedState.enam_name); 
+      } else {
+        setLocationStatus('State not recognized in database.');
+      }
+    } catch (error) {
+      setLocationStatus(error.message); // Shows "Permission denied" etc.
+    }
+  };
+  //
 
   const [errors, setErrors] = useState({});
 
@@ -62,9 +89,12 @@ const InputForm = ({ onSubmit, loading, onReset, hasResults }) => {
     onReset();
   };
 
-  const selectedVehicle = mockData.vehicles.find(v => v.type === formData.vehicle);
+  const grains = mockData.crops.filter(c => c.category === "Grains & Seeds");
+  const vegetables = mockData.crops.filter(c => c.category === "Fruits & Vegetables");
   const selectedCrop = mockData.crops.find(c => c.type === formData.crop);
-
+  const selectedVehicle = mockData.vehicles.find(v => v.type === formData.vehicle);
+  
+  
   return (
     <div className="input-form-container">
       <h2 className="form-title">Trip Details</h2>
@@ -75,19 +105,32 @@ const InputForm = ({ onSubmit, loading, onReset, hasResults }) => {
           <label htmlFor="crop" className="form-label">
             Crop Type <span className="required">*</span>
           </label>
+
           <select
-            id="crop"
-            className={`form-select ${errors.crop ? 'error' : ''}`}
-            value={formData.crop}
-            onChange={(e) => handleChange('crop', e.target.value)}
-          >
-            <option value="">-- Select Crop --</option>
-            {mockData.crops.map(crop => (
+          id="crop"
+          className={`form-select ${errors.crop ? 'error' : ''}`}
+          value={formData.crop}
+          onChange={(e) => handleChange('crop', e.target.value)}
+        >
+          <option value="">-- Select Commodity --</option>
+          
+          <optgroup label="🌾 Grains, Seeds & Cash Crops">
+            {grains.map((crop) => (
               <option key={crop.id} value={crop.type}>
-                {crop.icon} {crop.name} ({crop.nameHindi})
+                {crop.name}
               </option>
             ))}
-          </select>
+          </optgroup>
+          
+          <optgroup label="🍅 Fruits & Vegetables">
+            {vegetables.map((crop) => (
+              <option key={crop.id} value={crop.type}>
+                {crop.name}
+              </option>
+            ))}
+          </optgroup>
+          
+        </select>
           {errors.crop && <span className="error-text">{errors.crop}</span>}
           {selectedCrop && (
             <div className="field-info">
@@ -154,11 +197,22 @@ const InputForm = ({ onSubmit, loading, onReset, hasResults }) => {
             </div>
           )}
         </div>
-
+          {/* Location Detection Button */}
+        <div className="location-detector">
+          <button 
+            type="button" 
+            className="btn-secondary" 
+            onClick={handleDetectLocation}
+          >
+            Auto-Detect My Location
+          </button>
+          {locationStatus && <p className="location-status-text">{locationStatus}</p>}
+        </div>
         {/* Location Selection - DROPDOWN */}
+        {/* State Selection - DROPDOWN */}
         <div className="form-group">
           <label htmlFor="location" className="form-label">
-            Your Location <span className="required">*</span>
+            Your State <span className="required">*</span>
           </label>
           <select
             id="location"
@@ -166,10 +220,11 @@ const InputForm = ({ onSubmit, loading, onReset, hasResults }) => {
             value={formData.location}
             onChange={(e) => handleChange('location', e.target.value)}
           >
-            <option value="">-- Select Location --</option>
-            {mockData.locations.map(location => (
-              <option key={location.id} value={location.id}>
-                {location.name}, {location.state}
+            <option value="">-- Select State --</option>
+            {/* We map over our new states instead of mock locations */}
+            {stateBoundaries.states.map(state => (
+              <option key={state.state_id} value={state.enam_name}>
+                {state.name}
               </option>
             ))}
           </select>

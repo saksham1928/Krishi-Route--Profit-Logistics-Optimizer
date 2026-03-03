@@ -1,0 +1,15 @@
+{
+  "states": [
+    {
+      "name": "Rajasthan",
+      "state_id": "9",
+      "enam_name": "RAJASTHAN",
+      "bounds": {
+        "north": 30.20,
+        "south": 23.05,
+        "east": 78.28,
+        "west": 69.49
+      }
+    }
+  ]
+}

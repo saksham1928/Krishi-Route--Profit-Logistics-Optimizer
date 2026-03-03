@@ -1,206 +1,4 @@
 {
-  "locations": [
-    {
-      "id": "loc_001",
-      "name": "Nashik",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 19.9975,
-        "lng": 73.7898
-      }
-    },
-    {
-      "id": "loc_002",
-      "name": "Pune",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 18.5204,
-        "lng": 73.8567
-      }
-    },
-    {
-      "id": "loc_003",
-      "name": "Mumbai",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 19.0760,
-        "lng": 72.8777
-      }
-    },
-    {
-      "id": "loc_004",
-      "name": "Aurangabad",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 19.8762,
-        "lng": 75.3433
-      }
-    }
-  ],
-  "mandis": [
-    {
-      "id": "mandi_001",
-      "name": "Lasalgaon APMC",
-      "location": "Nashik",
-      "locationId": "loc_001",
-      "district": "Nashik",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 20.1406,
-        "lng": 74.2397
-      },
-      "prices": {
-        "onion": 2500,
-        "wheat": 2100,
-        "tomato": 1800,
-        "potato": 1500,
-        "rice": 2800,
-        "cabbage": 1200
-      },
-      "priceUpdatedAt": "2026-02-09T10:00:00Z",
-      "handlingCharges": 500,
-      "historicalTrends": {
-        "onion": {
-          "trend": "rising",
-          "change": 5.2,
-          "days": 3
-        }
-      },
-      "insights": "This mandi typically offers 8% higher prices on Wednesdays"
-    },
-    {
-      "id": "mandi_002",
-      "name": "Pimpalgaon APMC",
-      "location": "Nashik",
-      "locationId": "loc_001",
-      "district": "Nashik",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 19.9500,
-        "lng": 74.1500
-      },
-      "prices": {
-        "onion": 2200,
-        "wheat": 2000,
-        "tomato": 1600,
-        "potato": 1400,
-        "rice": 2600,
-        "cabbage": 1100
-      },
-      "priceUpdatedAt": "2026-02-09T09:30:00Z",
-      "handlingCharges": 500,
-      "historicalTrends": {},
-      "insights": "Nearest to Nashik farmers - quick turnaround"
-    },
-    {
-      "id": "mandi_003",
-      "name": "Yeola APMC",
-      "location": "Nashik",
-      "locationId": "loc_001",
-      "district": "Nashik",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 20.0425,
-        "lng": 74.4894
-      },
-      "prices": {
-        "onion": 2600,
-        "wheat": 2200,
-        "tomato": 1900,
-        "potato": 1600,
-        "rice": 2900,
-        "cabbage": 1300
-      },
-      "priceUpdatedAt": "2026-02-09T10:15:00Z",
-      "handlingCharges": 500,
-      "historicalTrends": {
-        "tomato": {
-          "trend": "falling",
-          "change": 3.5,
-          "days": 3
-        }
-      },
-      "insights": "Higher prices but farther distance"
-    },
-    {
-      "id": "mandi_004",
-      "name": "Vashi APMC",
-      "location": "Mumbai",
-      "locationId": "loc_003",
-      "district": "Mumbai",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 19.0688,
-        "lng": 73.0107
-      },
-      "prices": {
-        "onion": 2800,
-        "wheat": 2300,
-        "tomato": 2100,
-        "potato": 1700,
-        "rice": 3000,
-        "cabbage": 1500
-      },
-      "priceUpdatedAt": "2026-02-09T10:30:00Z",
-      "handlingCharges": 600,
-      "historicalTrends": {
-        "onion": {
-          "trend": "rising",
-          "change": 7.8,
-          "days": 5
-        }
-      },
-      "insights": "Mumbai's largest wholesale market - highest prices"
-    },
-    {
-      "id": "mandi_005",
-      "name": "Pimpri APMC",
-      "location": "Pune",
-      "locationId": "loc_002",
-      "district": "Pune",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 18.6186,
-        "lng": 73.8037
-      },
-      "prices": {
-        "onion": 2400,
-        "wheat": 2150,
-        "tomato": 1750,
-        "potato": 1450,
-        "rice": 2700,
-        "cabbage": 1150
-      },
-      "priceUpdatedAt": "2026-02-09T09:45:00Z",
-      "handlingCharges": 500,
-      "historicalTrends": {},
-      "insights": "Consistent prices, reliable market"
-    },
-    {
-      "id": "mandi_006",
-      "name": "Krishi Utpanna Bazaar Samiti",
-      "location": "Aurangabad",
-      "locationId": "loc_004",
-      "district": "Aurangabad",
-      "state": "Maharashtra",
-      "coordinates": {
-        "lat": 19.8762,
-        "lng": 75.3433
-      },
-      "prices": {
-        "onion": 2300,
-        "wheat": 2050,
-        "tomato": 1650,
-        "potato": 1350,
-        "rice": 2650,
-        "cabbage": 1050
-      },
-      "priceUpdatedAt": "2026-02-09T09:00:00Z",
-      "handlingCharges": 450,
-      "historicalTrends": {},
-      "insights": "Lower handling charges, competitive for nearby farmers"
-    }
-  ],
   "vehicles": [
     {
       "id": "vehicle_001",
@@ -230,81 +28,25 @@
       "description": "Medium truck for larger loads"
     }
   ],
-  "crops": [
-    {
-      "id": "crop_001",
-      "name": "Onion",
-      "nameHindi": "प्याज",
-      "type": "onion",
-      "perishable": true,
-      "shelfLife": 30
-    },
-    {
-      "id": "crop_002",
-      "name": "Wheat",
-      "nameHindi": "गेहूं",
-      "type": "wheat",
-      "perishable": false,
-      "shelfLife": 180
-    },
-    {
-      "id": "crop_003",
-      "name": "Tomato",
-      "nameHindi": "टमाटर",
-      "type": "tomato",
-      "perishable": true,
-      "shelfLife": 7
-    },
-    {
-      "id": "crop_004",
-      "name": "Potato",
-      "nameHindi": "आलू",
-      "type": "potato",
-      "perishable": false,
-      "shelfLife": 60
-    },
-    {
-      "id": "crop_005",
-      "name": "Rice",
-      "nameHindi": "चावल",
-      "type": "rice",
-      "perishable": false,
-      "shelfLife": 365
-    },
-    {
-      "id": "crop_006",
-      "name": "Cabbage",
-      "nameHindi": "पत्तागोभी",
-      "type": "cabbage",
-      "perishable": true,
-      "shelfLife": 14
+ "crops": [
+      { "id": "c_mustard", "name": "Mustard", "type": "MUSTARD", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 180 },
+      { "id": "c_wheat", "name": "Wheat", "type": "WHEAT", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 360 },
+      { "id": "c_guar", "name": "Guar Seeds", "type": "GUAR SEEDS", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 360 },
+      { "id": "c_moong", "name": "Moong Whole (Green Gram)", "type": "MOONG WHOLE (GREEN GRAM)", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 360 },
+      { "id": "c_bajra", "name": "Bajra", "type": "BAJRA", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 180 },
+      { "id": "c_castor", "name": "Castor Seed", "type": "CASTOR SEED", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 180 },
+      { "id": "c_maize", "name": "Maize", "type": "MAIZE", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 180 },
+      { "id": "c_cummin", "name": "Cummin", "type": "CUMMIN", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 360 },
+      { "id": "c_cotton", "name": "Cotton", "type": "COTTON", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 360 },
+      { "id": "c_jowar", "name": "Jowar", "type": "JOWAR", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 180 },
+      { "id": "c_taramira", "name": "Taramira", "type": "TARAMIRA", "category": "Grains & Seeds", "perishability": "Low", "shelfLifeDays": 180 },
       
-    }
-  ],
-  "distances": {
-    "loc_001_mandi_001": 15.5,
-    "loc_001_mandi_002": 12.5,
-    "loc_001_mandi_003": 45.2,
-    "loc_001_mandi_004": 167.8,
-    "loc_001_mandi_005": 210.3,
-    "loc_001_mandi_006": 225.7,
-    "loc_002_mandi_001": 212.4,
-    "loc_002_mandi_002": 215.8,
-    "loc_002_mandi_003": 245.6,
-    "loc_002_mandi_004": 152.3,
-    "loc_002_mandi_005": 18.7,
-    "loc_002_mandi_006": 230.5,
-    "loc_003_mandi_001": 165.2,
-    "loc_003_mandi_002": 168.9,
-    "loc_003_mandi_003": 198.3,
-    "loc_003_mandi_004": 22.4,
-    "loc_003_mandi_005": 148.6,
-    "loc_003_mandi_006": 335.8,
-    "loc_004_mandi_001": 228.3,
-    "loc_004_mandi_002": 231.7,
-    "loc_004_mandi_003": 195.4,
-    "loc_004_mandi_004": 338.2,
-    "loc_004_mandi_005": 232.1,
-    "loc_004_mandi_006": 8.5
-  }
+      { "id": "c_cucumber", "name": "Cucumber", "type": "CUCUMBER", "category": "Fruits & Vegetables", "perishability": "High", "shelfLifeDays": 7 },
+      { "id": "c_tomato", "name": "Tomato", "type": "TOMATO", "category": "Fruits & Vegetables", "perishability": "High", "shelfLifeDays": 7 },
+      { "id": "c_potato", "name": "Potato", "type": "POTATO", "category": "Fruits & Vegetables", "perishability": "Medium", "shelfLifeDays": 30 },
+      { "id": "c_greenchilli", "name": "Green Chilli", "type": "GREEN CHILLI", "category": "Fruits & Vegetables", "perishability": "High", "shelfLifeDays": 10 },
+      { "id": "c_bottlegourd", "name": "Bottle Gourd", "type": "BOTTLE GOURD", "category": "Fruits & Vegetables", "perishability": "High", "shelfLifeDays": 10 },
+      { "id": "c_cabbage", "name": "Cabbage", "type": "CABBAGE", "category": "Fruits & Vegetables", "perishability": "High", "shelfLifeDays": 14 },
+      { "id": "c_onion", "name": "Onion", "type": "ONION", "category": "Fruits & Vegetables", "perishability": "Medium", "shelfLifeDays": 45 }
+    ]
 }

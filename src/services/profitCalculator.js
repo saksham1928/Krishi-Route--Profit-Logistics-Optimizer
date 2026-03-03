@@ -1,125 +1,96 @@
 import mockData from '../data/mockData.json';
+import mandiCoordinates from '../data/mandiCoordinates.json';
 
-/**
- * Calculate profit for all available mandis based on user's trip data
- */
-export const calculateProfitability = (tripData) => {
+// --- The Haversine Formula ---
+// Calculates exact straight-line distance in km between two GPS points
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c); 
+};
+
+export const calculateProfitability = (tripData, liveData = null) => {
   const { crop, quantity, unit, vehicle, location } = tripData;
 
-  // Find selected location
-  const selectedLocation = mockData.locations.find(loc => loc.id === location);
-  if (!selectedLocation) {
-    throw new Error('Invalid location selected');
-  }
-
-  // Find selected vehicle
   const selectedVehicle = mockData.vehicles.find(v => v.type === vehicle);
-  if (!selectedVehicle) {
-    throw new Error('Invalid vehicle selected');
-  }
+  if (!selectedVehicle) throw new Error('Invalid vehicle selected');
 
-  // Find selected crop
   const selectedCrop = mockData.crops.find(c => c.type === crop);
-  if (!selectedCrop) {
-    throw new Error('Invalid crop selected');
-  }
+  if (!selectedCrop) throw new Error('Invalid crop selected');
 
-  // Convert quantity to quintals for standardization
   let quantityInQuintals = parseFloat(quantity);
-  if (unit === 'ton') {
-    quantityInQuintals = quantityInQuintals * 10; // 1 ton = 10 quintals
-  } else if (unit === 'kg') {
-    quantityInQuintals = quantityInQuintals / 100; // 100 kg = 1 quintal
+  if (unit === 'ton') quantityInQuintals = quantityInQuintals * 10;
+  else if (unit === 'kg') quantityInQuintals = quantityInQuintals / 100;
+
+  // Assuming you are in Jodhpur (since we know you tested from Rajasthan)
+  // For a true production app, you would pass the actual Geolocation coords here from Dashboard.jsx
+  const userLat = 26.2389;
+  const userLng = 73.0243; 
+
+  let mandiResults = [];
+
+  if (liveData && liveData.length > 0) {
+    liveData.forEach((enamItem, index) => {
+      // 1. Look up the Mandi's real coordinates from our new JSON dictionary
+      const stateData = mandiCoordinates[enamItem.state];
+      const mandiCoords = stateData ? stateData[enamItem.apmc] : null;
+
+      // 2. If we don't have the coordinates in our file, skip this mandi!
+      // This prevents errors and ensures the map only plots what it knows.
+      if (!mandiCoords) return; 
+
+      const marketPrice = parseFloat(enamItem.modal_price) || parseFloat(enamItem.min_price);
+      
+      // 3. REAL MATH: Calculate exact distance using Haversine
+      const distance = calculateDistance(userLat, userLng, mandiCoords.lat, mandiCoords.lng);
+
+      // Prevent division by 0 if distance is 0
+      const safeDistance = distance === 0 ? 1 : distance;
+
+      const revenue = marketPrice * quantityInQuintals;
+      const transportCost = safeDistance * selectedVehicle.ratePerKm;
+      const handlingCost = 500; 
+      const totalCosts = transportCost + handlingCost;
+      const netProfit = revenue - totalCosts;
+
+      mandiResults.push({
+        id: enamItem.id || `mandi_${index}`,
+        name: enamItem.apmc,
+        location: enamItem.state,
+        district: enamItem.apmc,
+        coordinates: mandiCoords,
+        distance: safeDistance,
+        marketPrice: marketPrice,
+        revenue: revenue,
+        costs: {
+          transport: transportCost,
+          handling: handlingCost,
+          other: 0,
+          total: totalCosts
+        },
+        netProfit: netProfit,
+        profitPerKm: netProfit / safeDistance,
+        profitMargin: (netProfit / revenue) * 100,
+        historicalInsight: `Live eNAM Price`,
+      });
+    });
+  } else {
+    throw new Error("No live trade data found for this crop today.");
   }
 
-  // Get all mandis and calculate profitability for each
-  const mandiResults = mockData.mandis.map(mandi => {
-    // Get distance from location to mandi
-    const distanceKey = `${location}_${mandi.id}`;
-    const distance = mockData.distances[distanceKey];
+  // If we filtered out all mandis because they weren't in our coordinate file:
+  if (mandiResults.length === 0) {
+     throw new Error("Prices found, but mapping coordinates are missing. Try another crop.");
+  }
 
-    if (!distance) {
-      console.warn(`No distance data for ${selectedLocation.name} to ${mandi.name}`);
-      return null;
-    }
-
-    // Get market price for the crop
-    const marketPrice = mandi.prices[crop];
-    if (!marketPrice) {
-      console.warn(`No price data for ${crop} at ${mandi.name}`);
-      return null;
-    }
-
-    // Calculate revenue (price per quintal * quantity)
-    const revenue = marketPrice * quantityInQuintals;
-
-    // Calculate transport cost (distance * rate per km)
-    const transportCost = distance * selectedVehicle.ratePerKm;
-
-    // Handling charges
-    const handlingCost = mandi.handlingCharges;
-
-    // Other costs (can be extended later)
-    const otherCosts = 0;
-
-    // Total costs
-    const totalCosts = transportCost + handlingCost + otherCosts;
-
-    // Net profit
-    const netProfit = revenue - totalCosts;
-
-    // Profit per km (efficiency metric)
-    const profitPerKm = netProfit / distance;
-
-    // Profit margin percentage
-    const profitMargin = (netProfit / revenue) * 100;
-
-    // Check for price alerts
-    let priceAlert = null;
-    if (mandi.historicalTrends && mandi.historicalTrends[crop]) {
-      priceAlert = mandi.historicalTrends[crop];
-    }
-
-    // Check for perishability warnings
-    let perishabilityWarning = null;
-    if (selectedCrop.perishable && distance > 100) {
-      const estimatedTravelTime = distance / 40; // Assuming 40 km/hr average
-      perishabilityWarning = {
-        message: `Long journey (~${estimatedTravelTime.toFixed(1)} hours). Ensure proper storage for ${selectedCrop.name}.`,
-        travelTime: estimatedTravelTime,
-        shelfLife: selectedCrop.shelfLife
-      };
-    }
-
-    return {
-      id: mandi.id,
-      name: mandi.name,
-      location: mandi.location,
-      district: mandi.district,
-      coordinates: mandi.coordinates,
-      distance: distance,
-      marketPrice: marketPrice,
-      revenue: revenue,
-      costs: {
-        transport: transportCost,
-        handling: handlingCost,
-        other: otherCosts,
-        total: totalCosts
-      },
-      netProfit: netProfit,
-      profitPerKm: profitPerKm,
-      profitMargin: profitMargin,
-      priceAlert: priceAlert,
-      perishabilityWarning: perishabilityWarning,
-      historicalInsight: mandi.insights,
-      priceUpdatedAt: mandi.priceUpdatedAt
-    };
-  }).filter(result => result !== null); // Remove any nulls
-
-  // Sort by net profit (descending)
   mandiResults.sort((a, b) => b.netProfit - a.netProfit);
 
-  // Identify best mandi
   const bestMandi = mandiResults.length > 0 ? {
     id: mandiResults[0].id,
     name: mandiResults[0].name,
@@ -127,10 +98,8 @@ export const calculateProfitability = (tripData) => {
     distance: mandiResults[0].distance
   } : null;
 
-  // Find nearest mandi for comparison
   const nearestMandi = [...mandiResults].sort((a, b) => a.distance - b.distance)[0];
 
-  // Calculate potential savings (best vs nearest)
   const potentialSavings = bestMandi && nearestMandi && bestMandi.id !== nearestMandi.id
     ? bestMandi.netProfit - nearestMandi.netProfit
     : 0;
@@ -142,47 +111,8 @@ export const calculateProfitability = (tripData) => {
     potentialSavings: potentialSavings,
     totalMarketsCompared: mandiResults.length,
     cropDetails: selectedCrop,
-    locationDetails: selectedLocation,
+    locationDetails: { name: location, coordinates: { lat: userLat, lng: userLng } }, 
     vehicleDetails: selectedVehicle,
     quantityInQuintals: quantityInQuintals
   };
-};
-
-/**
- * Get distance between two locations
- */
-export const getDistance = (locationId, mandiId) => {
-  const distanceKey = `${locationId}_${mandiId}`;
-  return mockData.distances[distanceKey] || null;
-};
-
-/**
- * Get all available locations
- */
-export const getLocations = () => {
-  return mockData.locations;
-};
-
-/**
- * Get all available crops
- */
-export const getCrops = () => {
-  return mockData.crops;
-};
-
-/**
- * Get all available vehicles
- */
-export const getVehicles = () => {
-  return mockData.vehicles;
-};
-
-/**
- * Get mandis for a specific location
- */
-export const getMandisForLocation = (locationId) => {
-  return mockData.mandis.filter(mandi => {
-    const distanceKey = `${locationId}_${mandi.id}`;
-    return mockData.distances[distanceKey] !== undefined;
-  });
 };
