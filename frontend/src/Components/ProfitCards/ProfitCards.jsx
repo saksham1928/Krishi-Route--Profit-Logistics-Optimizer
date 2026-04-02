@@ -1,6 +1,10 @@
 import './ProfitCards.css';
+import PriceTrends from '../PriceTrends/PriceTrends';
+import { useState } from 'react';
 
-const ProfitCards = ({ results, selectedCrop }) => {
+const ProfitCards = ({ results, selectedCrop, stateName = "RAJASTHAN" }) => {
+  const [activeTrendId, setActiveTrendId] = useState(null);
+
   if (!results || results.length === 0) {
     return <div className="no-results">No markets found</div>;
   }
@@ -66,9 +70,12 @@ const ProfitCards = ({ results, selectedCrop }) => {
         const perishWarning = getPerishabilityWarning(mandi);
         const profitMargin = ((mandi.netProfit / mandi.revenue) * 100).toFixed(1);
 
+        // Safe unique ID for toggling
+        const cardId = mandi.id || mandi.name;
+
         return (
           <div 
-            key={mandi.id || index}
+            key={cardId}
             className={`profit-card ${index === 0 ? 'best-option' : ''}`}
           >
             {/* Header */}
@@ -190,6 +197,23 @@ const ProfitCards = ({ results, selectedCrop }) => {
                 </span>
               </div>
             )}
+
+            {/*TREND CHART TOGGLE AND COMPONENT*/}
+            <button 
+              onClick={() => setActiveTrendId(activeTrendId === cardId ? null : cardId)}
+              style={{ width: '100%', padding: '10px', marginTop: '15px', backgroundColor: '#fff', border: '1px solid #dadce0', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: '#1a73e8', transition: 'background 0.2s' }}
+            >
+              {activeTrendId === cardId ? 'Hide Trends' : 'View 60-Day Trends'}
+            </button>
+
+            {activeTrendId === cardId && (
+              <PriceTrends 
+                stateName={stateName} 
+                cropName={selectedCrop} 
+                mandiName={mandi.name.split(' (')[0]} 
+              />
+            )}
+
           </div>
         );
       })}
